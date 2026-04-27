@@ -1,5 +1,7 @@
 ﻿<Window x:Class="Jasmian.Client.LoginWindow"
-        xmlns="http:        xmlns:x="http:        Title="Вход - Jasmian" Height="450" Width="400" 
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		Title="Вход - Jasmian" Height="450" Width="400" 
         WindowStartupLocation="CenterScreen" Background="#FFF0F5" FontFamily="Segoe UI"
         UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextFormattingMode="Display">
     <Grid>

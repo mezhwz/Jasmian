@@ -498,6 +498,10 @@ namespace Jasmian.Client
             else if (UserProfilePanel.Visibility == Visibility.Visible)
                 UserProfilePanel.BeginAnimation(UIElement.OpacityProperty, fadeAnim);
         }
+        private void OverlayContainer_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            CloseOverlay_Click(null, null); // Перенаправляем клик
+        }
 
         private void PreventClose_MouseDown(object sender, MouseButtonEventArgs e) => e.Handled = true;
 
