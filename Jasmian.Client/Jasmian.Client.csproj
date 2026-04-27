@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Icons\attach.png" />
+    <None Remove="Icons\check.png" />
+    <None Remove="Icons\double_check.png" />
+    <None Remove="Icons\logout.png" />
+    <None Remove="Icons\search.png" />
+    <None Remove="Icons\send.png" />
+    <None Remove="Icons\settings.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Icons\attach.png" />
+    <Resource Include="Icons\check.png" />
+    <Resource Include="Icons\double_check.png" />
+    <Resource Include="Icons\logout.png" />
+    <Resource Include="Icons\search.png" />
+    <Resource Include="Icons\send.png" />
+    <Resource Include="Icons\settings.png" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,7 @@
+﻿<Application x:Class="Jasmian.Client.App"
+             xmlns="http:             xmlns:x="http:             xmlns:local="clr-namespace:Jasmian.Client"
+             StartupUri="LoginWindow.xaml">
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>

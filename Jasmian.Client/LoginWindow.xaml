@@ -1,0 +1,30 @@
+﻿<Window x:Class="Jasmian.Client.LoginWindow"
+        xmlns="http:        xmlns:x="http:        Title="Вход - Jasmian" Height="450" Width="400" 
+        WindowStartupLocation="CenterScreen" Background="#FFF0F5" FontFamily="Segoe UI"
+        UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextFormattingMode="Display">
+    <Grid>
+        <Border Background="White" Width="300" Height="350" CornerRadius="15" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1"/>
+            </Border.Effect>
+            <StackPanel Margin="30,0,30,0" VerticalAlignment="Center">
+                <TextBlock Text="Jasmian" FontSize="28" FontWeight="Bold" Foreground="#FF1493" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                <TextBlock Text="Войдите, чтобы начать общение" FontSize="12" Foreground="#FFB6C1" HorizontalAlignment="Center" Margin="0,0,0,25"/>
+
+                <TextBlock Text="Логин" FontSize="13" Foreground="#FF69B4" Margin="0,0,0,5"/>
+                <TextBox x:Name="LoginBox" Padding="8" BorderBrush="#FFB6C1" BorderThickness="1" Background="#FFF8FA"/>
+
+                <TextBlock Text="Пароль" FontSize="13" Foreground="#FF69B4" Margin="0,15,0,5"/>
+                <PasswordBox x:Name="PasswordBox" Padding="8" BorderBrush="#FFB6C1" BorderThickness="1" Background="#FFF8FA"/>
+
+                <Button Content="Войти" Background="#FF69B4" Foreground="White" FontWeight="Bold" Margin="0,25,0,10" Padding="10" BorderThickness="0" Click="Login_Click"/>
+                <Button Content="Создать аккаунт" Background="Transparent" Foreground="#FF1493" FontWeight="SemiBold" BorderThickness="0" Click="Register_Click"/>
+            </StackPanel>
+        </Border>
+
+        <Border x:Name="NotificationToast" VerticalAlignment="Bottom" HorizontalAlignment="Center" 
+                Background="#E6333333" CornerRadius="8" Padding="20,12" Margin="0,0,0,30" Visibility="Collapsed">
+            <TextBlock x:Name="NotificationText" Foreground="White" Text="Уведомление" FontSize="14"/>
+        </Border>
+    </Grid>
+</Window>

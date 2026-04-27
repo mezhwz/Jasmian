@@ -1,0 +1,732 @@
+﻿<Window x:Class="Jasmian.Client.ChatWindow"
+        xmlns="http:        xmlns:x="http:        Title="Jasmian Messenger" Height="600" Width="900" 
+        WindowStartupLocation="CenterScreen" Background="#FFF0F5" FontFamily="Segoe UI"
+        UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextFormattingMode="Display">
+    <Window.Resources>
+        <SolidColorBrush x:Key="PrimaryPink" Color="#FF1493"/>
+        <SolidColorBrush x:Key="LightPink" Color="#FFB6C1"/>
+        <SolidColorBrush x:Key="BgPink" Color="#FFF0F5"/>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#FFF8FA"/>
+            <Setter Property="BorderBrush" Value="{StaticResource LightPink}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="15">
+                            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PinkContextMenu" TargetType="ContextMenu">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource LightPink}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="0,5"/>
+            <Setter Property="Grid.IsSharedSizeScope" Value="True"/>
+            <Setter Property="HasDropShadow" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ContextMenu">
+                        <Border x:Name="Border" CornerRadius="12" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="15" ShadowDepth="3" Opacity="0.1" Color="Black"/>
+                            </Border.Effect>
+                            <ScrollViewer x:Name="PART_ScrollViewer" Style="{DynamicResource {x:Type ScrollViewer}}">
+                                <ItemsPresenter x:Name="PART_ItemsPresenter" KeyboardNavigation.TabNavigation="Cycle" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PinkMenuItem" TargetType="MenuItem">
+            <Setter Property="Foreground" Value="#333333"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="15,10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuItem">
+                        <Border x:Name="BgBorder" Background="Transparent" CornerRadius="8" Margin="5,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="25" SharedSizeGroup="Icon"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <ContentPresenter x:Name="Icon" ContentSource="Icon" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                <ContentPresenter x:Name="Header" ContentSource="Header" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="BgBorder" Property="Background" Value="#FFF8FA"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BgBorder" Property="Background" Value="#FFE4E1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PrimaryPink}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="15" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="0.85"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Opacity" Value="0.7"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="MinimalScrollThumb" TargetType="{x:Type Thumb}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border x:Name="ThumbBorder" CornerRadius="3" Background="{StaticResource LightPink}" Width="6" Margin="0,0,2,0" HorizontalAlignment="Right"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ThumbBorder" Property="Background" Value="{StaticResource PrimaryPink}" />
+                                <Setter TargetName="ThumbBorder" Property="Width" Value="8" />
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter TargetName="ThumbBorder" Property="Background" Value="{StaticResource PrimaryPink}" />
+                                <Setter TargetName="ThumbBorder" Property="Width" Value="8" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type ScrollBar}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid Width="12" Background="Transparent">
+                            <Track x:Name="PART_Track" IsDirectionReversed="true" Focusable="false">
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource MinimalScrollThumb}"/>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="false"/>
+                                </Track.IncreaseRepeatButton>
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="false"/>
+                                </Track.DecreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="10" Margin="5,2">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#FFE4E1"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FFF8FA"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid x:Name="MainContentContainer">
+            <Grid>
+                <Grid.Effect>
+                    <BlurEffect x:Name="MainBlur" Radius="0" KernelType="Gaussian"/>
+                </Grid.Effect>
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="280"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Background="White" BorderBrush="#FFE4E1" BorderThickness="0,0,1,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60"/>
+                            <RowDefinition Height="60"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="#FF69B4" Padding="15,0">
+                            <Grid>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Grid Width="36" Height="36" Margin="0,0,10,0">
+                                        <Border CornerRadius="18" Background="#FFB6C1" x:Name="MyInitialsBorder">
+                                            <TextBlock x:Name="MyInitials" Text="U" Foreground="White" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <Ellipse x:Name="MyAvatar" Width="36" Height="36" Visibility="Collapsed">
+                                            <Ellipse.Fill>
+                                                <ImageBrush x:Name="MyAvatarBrush" Stretch="UniformToFill"/>
+                                            </Ellipse.Fill>
+                                        </Ellipse>
+                                    </Grid>
+                                    <Button Background="Transparent" BorderThickness="0" Padding="5" VerticalAlignment="Center" Click="Profile_Click" ToolTip="Мой профиль">
+                                        <Image Source="/Icons/settings.png" Width="22" Height="22"/>
+                                    </Button>
+                                </StackPanel>
+                                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Click="Logout_Click" ToolTip="Выйти">
+                                    <Image Source="/Icons/logout.png" Width="22" Height="22"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Row="1" BorderBrush="#FFE4E1" BorderThickness="0,0,0,1" Padding="15,10">
+                            <Grid>
+                                <TextBox x:Name="SearchBox" Padding="25,8,8,8" BorderBrush="#FFB6C1" Background="#FFF8FA" 
+             Text="Поиск..." TextChanged="SearchBox_TextChanged" GotFocus="SearchBox_GotFocus" LostFocus="SearchBox_LostFocus"/>
+                                <Image Source="/Icons/search.png" Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" IsHitTestVisible="False" Opacity="0.6"/>
+                            </Grid>
+                        </Border>
+
+                        <Grid Grid.Row="2">
+                            <ListBox x:Name="ChatsList" Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="ChatsList_SelectionChanged">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="Padding" Value="15,12"/>
+                                        <Setter Property="BorderBrush" Value="#FFE4E1"/>
+                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListBoxItem">
+                                                    <Border Background="{TemplateBinding Background}" 
+                                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                                    BorderThickness="{TemplateBinding BorderThickness}" 
+                                                    Padding="{TemplateBinding Padding}">
+                                                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                    </Border>
+
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsSelected" Value="True">
+                                                            <Setter Property="Background" Value="#FFE4E1"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="#FFF8FA"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="45"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid Grid.Column="0" Width="42" Height="42">
+                                                <Border CornerRadius="21" Background="#FFB6C1" Visibility="{Binding InitialsVisibility}">
+                                                    <TextBlock Text="{Binding DisplayName[0]}" Foreground="White" FontWeight="Bold" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <Ellipse Width="42" Height="42" Visibility="{Binding AvatarVisibility}">
+                                                    <Ellipse.Fill>
+                                                        <ImageBrush ImageSource="{Binding AvatarImage}" Stretch="UniformToFill"/>
+                                                    </Ellipse.Fill>
+                                                </Ellipse>
+                                                <Border Width="12" Height="12" CornerRadius="6" Background="{Binding StatusColor}" Visibility="{Binding StatusVisibility}" HorizontalAlignment="Right" VerticalAlignment="Bottom" BorderBrush="White" BorderThickness="2" Margin="0,0,-2,-2"/>
+                                            </Grid>
+                                            <StackPanel Grid.Column="1" Margin="12,0,5,0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" Foreground="#333"/>
+                                                <TextBlock Text="{Binding LastMessage}" FontSize="12" Foreground="#888" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                                <TextBlock Text="{Binding Time}" FontSize="11" Foreground="#AAA" Margin="0,0,0,5" HorizontalAlignment="Right"/>
+                                                <Border Background="#FF1493" CornerRadius="10" Padding="6,2" MinWidth="20" HorizontalAlignment="Right" Visibility="{Binding UnreadVisibility}">
+                                                    <TextBlock Text="{Binding UnreadCount}" Foreground="White" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                                </Border>
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+
+                            <ListBox x:Name="SearchResultsList" Background="White" BorderThickness="0" Visibility="Collapsed" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="SearchResultsList_SelectionChanged">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                        <Setter Property="Padding" Value="0"/>
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Margin="15,10">
+                                            <Grid Width="36" Height="36">
+                                                <Border CornerRadius="18" Background="#FF1493" Visibility="{Binding InitialsVisibility}">
+                                                    <TextBlock Text="{Binding DisplayName[0]}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                                </Border>
+                                                <Ellipse Width="36" Height="36" Visibility="{Binding AvatarVisibility}">
+                                                    <Ellipse.Fill>
+                                                        <ImageBrush ImageSource="{Binding AvatarImage}" Stretch="UniformToFill"/>
+                                                    </Ellipse.Fill>
+                                                </Ellipse>
+                                            </Grid>
+                                            <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" Margin="15,0,0,0" FontSize="14" FontWeight="SemiBold"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <Grid Grid.Column="1" Background="#FFF0F5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Background="White" BorderBrush="#FFE4E1" BorderThickness="0,0,0,1"
+                MouseLeftButtonDown="ChatHeader_Click" Cursor="Hand">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0">
+                            <Grid Width="40" Height="40">
+                                <Border CornerRadius="20" Background="#FF69B4" x:Name="ActiveChatInitialsBorder">
+                                    <TextBlock x:Name="ActiveChatInitials" Text="" Foreground="White" FontWeight="Bold" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <Ellipse x:Name="ActiveChatAvatar" Width="40" Height="40" Visibility="Collapsed">
+                                    <Ellipse.Fill>
+                                        <ImageBrush x:Name="ActiveChatAvatarBrush" Stretch="UniformToFill"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                            </Grid>
+                            <StackPanel Margin="15,0,0,0" VerticalAlignment="Center">
+                                <TextBlock x:Name="ActiveChatName" Text="Выберите собеседника слева" FontWeight="Bold" FontSize="16" Foreground="#333"/>
+                                <TextBlock x:Name="ActiveChatStatus" Text="" FontSize="12" Foreground="#FFB6C1"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <ListBox x:Name="ChatHistory" Grid.Row="1" Background="Transparent" BorderThickness="0" Margin="10,10,10,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False">
+
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Focusable" Value="False"/>
+                                <Setter Property="Margin" Value="0,2"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border Background="Transparent">
+                                                <ContentPresenter/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,5">
+                                    <Border Padding="12,10" MaxWidth="400">
+
+                                        <Border.ContextMenu>
+                                            <ContextMenu Style="{StaticResource PinkContextMenu}">
+                                                <MenuItem Header="Копировать" Click="CopyMessage_Click" Style="{StaticResource PinkMenuItem}">
+                                                    <MenuItem.Icon>
+                                                        <TextBlock Text="📋" FontSize="14"/>
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <Separator/>
+                                                <MenuItem Header="Редактировать" Click="EditMessage_Click" Style="{StaticResource PinkMenuItem}">
+                                                    <MenuItem.Icon>
+                                                        <TextBlock Text="✏️" FontSize="14"/>
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem Header="Удалить" Click="DeleteMessage_Click" Foreground="#CC0000" Style="{StaticResource PinkMenuItem}">
+                                                    <MenuItem.Icon>
+                                                        <TextBlock Text="🗑" FontSize="14" Foreground="#CC0000"/>
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                            </ContextMenu>
+                                        </Border.ContextMenu>
+
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="HorizontalAlignment" Value="Left"/>
+                                                <Setter Property="Background" Value="#F5F5F5"/>
+                                                <Setter Property="CornerRadius" Value="18,18,18,0"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsMe}" Value="True">
+                                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                        <Setter Property="Background" Value="#FF1493"/>
+                                                        <Setter Property="CornerRadius" Value="18,18,0,18"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Sender}" FontWeight="Bold" FontSize="11" Margin="0,0,0,5">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="{StaticResource PrimaryPink}"/>
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsMe}" Value="True">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+
+                                            <Border CornerRadius="8" Margin="0,0,0,5" MaxHeight="300" ClipToBounds="True" Visibility="{Binding ImageVisibility}">
+                                                <Image Source="{Binding AttachedImage}" Stretch="Uniform"/>
+                                            </Border>
+
+                                            <TextBlock Text="{Binding Text}" TextWrapping="Wrap" FontSize="14" Visibility="{Binding TextVisibility}">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="#333"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsMe}" Value="True">
+                                                                <Setter Property="Foreground" Value="White"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,3,0,0">
+                                                <TextBlock Text="(изменено) " FontSize="10" Foreground="#AAA" Visibility="{Binding EditedVisibility}"/>
+
+                                                <TextBlock Text="{Binding Time}" FontSize="10">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="#AAA"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsMe}" Value="True">
+                                                                    <Setter Property="Foreground" Value="#E6FFFFFF"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+
+                                                <TextBlock FontSize="10" Margin="5,0,0,0">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value=" ✓"/>
+                                                            <Setter Property="Foreground" Value="#AAA"/>
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsMe}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                    <Setter Property="Foreground" Value="#CCFFFFFF"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsRead}" Value="True">
+                                                                    <Setter Property="Text" Value=" ✓✓"/>
+                                                                    <Setter Property="Foreground" Value="White"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    
+                    <Border Grid.Row="2" Background="White" BorderBrush="#FFE4E1" BorderThickness="0,1,0,0" Padding="15">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Border Grid.Row="0" x:Name="AttachPreview" Background="#FFF0F5" CornerRadius="10" Margin="0,0,0,10" Padding="5" Visibility="Collapsed" HorizontalAlignment="Left">
+                                <Grid>
+                                    <Image x:Name="PreviewImage" Height="80" Width="80" Stretch="UniformToFill">
+                                        <Image.Clip>
+                                            <RectangleGeometry RadiusX="8" RadiusY="8" Rect="0,0,80,80"/>
+                                        </Image.Clip>
+                                    </Image>
+                                    <Button Content="✕" HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="20" 
+                                    Foreground="White" Cursor="Hand" Click="RemoveAttach_Click" Margin="0,-5,-5,0" Padding="0" FontSize="10">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="#E6333333" CornerRadius="10">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Row="1" x:Name="EditPreviewPanel" Background="#FFF8FA" BorderBrush="{StaticResource LightPink}" BorderThickness="1" CornerRadius="10" Margin="0,0,0,10" Padding="10,5" Visibility="Collapsed">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" Text="✏️" FontSize="18" VerticalAlignment="Center" Margin="0,0,10,0"/>
+
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="Редактирование сообщения" FontSize="12" Foreground="{StaticResource PrimaryPink}" FontWeight="Bold"/>
+                                        <TextBlock x:Name="EditOldMessageText" Text="Старый текст..." FontSize="13" Foreground="#555" TextTrimming="CharacterEllipsis" MaxHeight="20"/>
+                                    </StackPanel>
+
+                                    <Button Grid.Column="2" Content="✕" HorizontalAlignment="Right" VerticalAlignment="Center" Width="20" Height="20" Foreground="White" Cursor="Hand" Click="CancelEdit_Click" Padding="0" FontSize="10">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="#E6333333" CornerRadius="10">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </Grid>
+                            </Border>
+
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Button Grid.Column="0" Width="40" Height="40" Background="Transparent" BorderThickness="0" Margin="0,0,10,0" Padding="0" Cursor="Hand" Click="Attach_Click" ToolTip="Прикрепить фото">
+                                    <Image Source="/Icons/attach.png" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Button>
+
+                                <TextBox x:Name="MessageInput" Grid.Column="1" Padding="12" FontSize="14" BorderBrush="#FFB6C1" BorderThickness="1" Background="#FFF8FA" TextWrapping="Wrap" MaxHeight="100" VerticalScrollBarVisibility="Auto" KeyDown="MessageInput_KeyDown" TextChanged="MessageInput_TextChanged"/>
+
+                                <Button Grid.Column="2" Width="45" Height="45" Margin="10,0,0,0" Background="#FF1493" BorderThickness="0" Padding="0" Click="Send_Click" ToolTip="Отправить">
+                                    <Image Source="/Icons/send.png" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <Border x:Name="NotificationToast" VerticalAlignment="Bottom" HorizontalAlignment="Center" Grid.ColumnSpan="2"
+            Background="#E6333333" CornerRadius="8" Padding="20,12" Margin="0,0,0,30" Visibility="Collapsed" Panel.ZIndex="100">
+                    <TextBlock x:Name="NotificationText" Foreground="White" Text="Уведомление" FontSize="14"/>
+                </Border>
+
+                <Border x:Name="ReconnectBanner" Grid.ColumnSpan="2" VerticalAlignment="Top" 
+            Background="#FFF3CD" BorderBrush="#FFEEBA" BorderThickness="0,0,0,1" 
+            Padding="10" Visibility="Collapsed" Panel.ZIndex="150">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="⏳" Margin="0,0,8,0"/>
+                        <TextBlock Text="Потеряно соединение с сервером. Пытаемся переподключиться..." 
+                       Foreground="#856404" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <Grid x:Name="OverlayContainer" Visibility="Collapsed" Panel.ZIndex="200" Background="#4D000000" MouseLeftButtonDown="CloseOverlay_Click">
+
+            <Border x:Name="MyProfilePanel" Visibility="Collapsed" Width="400" Height="550" Background="White" CornerRadius="30" VerticalAlignment="Center" HorizontalAlignment="Center" MouseLeftButtonDown="PreventClose_MouseDown">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="30" ShadowDepth="0" Opacity="0.3"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="280"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+
+                        <Border x:Name="MainAvatarBorder" CornerRadius="30,30,0,0" Background="{StaticResource PrimaryPink}">
+                            <TextBlock x:Name="AvatarInitials" Text="U" Foreground="White" FontSize="72" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+
+                        <Rectangle x:Name="MainAvatarImage" RadiusX="30" RadiusY="30" Visibility="Collapsed">
+                            <Rectangle.Fill>
+                                <ImageBrush x:Name="MainAvatarBrush" Stretch="UniformToFill"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+
+                        <Border CornerRadius="0,0,0,0" VerticalAlignment="Bottom" Height="100">
+                            <Border.Background>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="Transparent" Offset="0"/>
+                                    <GradientStop Color="#CC000000" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+
+                        <StackPanel VerticalAlignment="Bottom" Margin="25,0,25,20">
+                            <TextBlock Text="Мой профиль" FontSize="26" FontWeight="Bold" Foreground="White"/>
+                            <TextBlock Text="Редактирование" FontSize="14" Foreground="#B3FFFFFF"/>
+                        </StackPanel>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Opacity="0" Click="PrevMyPhoto_Click" Cursor="Hand"/>
+                            <Button Grid.Column="1" Opacity="0" Click="NextMyPhoto_Click" Cursor="Hand"/>
+                        </Grid>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="15">
+                            <Button Content="🗑" Width="36" Height="36" Background="#80000000" Foreground="White" Padding="0" Margin="0,0,10,0" FontSize="16" Click="RemoveCurrentPhoto_Click" ToolTip="Удалить это фото">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="18"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                            <Button Content="+" Width="36" Height="36" Background="#FF1493" Foreground="White" Padding="0" FontSize="24" FontWeight="SemiBold" Click="AddPhoto_Click" ToolTip="Добавить фото" Margin="0,-2,0,0">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="18"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <ScrollViewer Grid.Row="1" Margin="25,15" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock Text="ОСНОВНАЯ ИНФОРМАЦИЯ" FontSize="12" Foreground="#888" FontWeight="Bold" Margin="0,10,0,10"/>
+                            <TextBlock Text="Отображаемое имя" FontSize="13" Foreground="{StaticResource PrimaryPink}"/>
+                            <TextBox x:Name="DisplayNameBox" Margin="0,5,0,15"/>
+                            <TextBlock Text="Телефон" FontSize="13" Foreground="{StaticResource PrimaryPink}"/>
+                            <TextBox x:Name="PhoneBox" Margin="0,5,0,15"/>
+                            <TextBlock Text="О себе" FontSize="13" Foreground="{StaticResource PrimaryPink}"/>
+                            <TextBox x:Name="BioBox" Margin="0,5,0,15" TextWrapping="Wrap" MinHeight="60"/>
+                            <TextBlock Text="Дата рождения" FontSize="13" Foreground="{StaticResource PrimaryPink}"/>
+                            <DatePicker x:Name="BirthdayPicker" Margin="0,5,0,15" BorderThickness="0"/>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <Border Grid.Row="2" Padding="20" Background="#FDFDFD" CornerRadius="0,0,30,30">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Content="Отмена" Grid.Column="0" Background="#E0E0E0" Foreground="#555" Click="CloseOverlay_Click"/>
+                            <Button Content="Сохранить" Grid.Column="2" Click="SaveProfile_Click"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Border x:Name="UserProfilePanel" Visibility="Collapsed" Width="400" Height="550" Background="White" CornerRadius="30" VerticalAlignment="Center" HorizontalAlignment="Center" MouseLeftButtonDown="PreventClose_MouseDown">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="30" ShadowDepth="0" Opacity="0.3"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="280"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Rectangle x:Name="PhotoBox" RadiusX="30" RadiusY="30">
+                            <Rectangle.Fill>
+                                <ImageBrush x:Name="ProfileImageBrush" Stretch="UniformToFill"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Border CornerRadius="0,0,30,30" VerticalAlignment="Bottom" Height="100">
+                            <Border.Background>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="Transparent" Offset="0"/>
+                                    <GradientStop Color="#CC000000" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                        </Border>
+                        <StackPanel VerticalAlignment="Bottom" Margin="25,0,25,20">
+                            <TextBlock x:Name="UserDisplayNameText" Text="Загрузка..." FontSize="26" FontWeight="Bold" Foreground="White"/>
+                            <TextBlock x:Name="UserStatusText" Text="в сети" FontSize="14" Foreground="#B3FFFFFF"/>
+                        </StackPanel>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Opacity="0" Click="PrevPhoto_Click" Cursor="Hand"/>
+                            <Button Grid.Column="1" Opacity="0" Click="NextPhoto_Click" Cursor="Hand"/>
+                        </Grid>
+
+                        <Button Content="✕" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="15" Width="32" Height="32" Background="#66000000" Foreground="White" Padding="0" Click="CloseOverlay_Click"/>
+                    </Grid>
+
+                    <ScrollViewer Grid.Row="1" Margin="25,15" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <TextBlock x:Name="UserPhoneText" Text="..." FontSize="16" Foreground="#333"/>
+                            <TextBlock Text="Телефон" FontSize="11" Foreground="#888" Margin="0,0,0,15"/>
+                            <TextBlock x:Name="UserBioText" Text="..." FontSize="16" Foreground="#333" TextWrapping="Wrap"/>
+                            <TextBlock Text="О себе" FontSize="11" Foreground="#888" Margin="0,0,0,15"/>
+                            <TextBlock x:Name="UserUsernameText" Text="..." FontSize="16" Foreground="{StaticResource PrimaryPink}" FontWeight="SemiBold"/>
+                            <TextBlock Text="Логин" FontSize="11" Foreground="#888" Margin="0,0,0,15"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+            
+        </Grid>
+    </Grid>
+    
+</Window>

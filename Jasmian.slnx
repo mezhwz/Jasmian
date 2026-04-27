@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Jasmian.Client/Jasmian.Client.csproj" />
+  <Project Path="Jasmian.Server/Jasmian.Server.csproj" />
+</Solution>
